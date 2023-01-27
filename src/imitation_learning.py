@@ -26,7 +26,7 @@ def build_lqr_policy(Q, R, A, B):
     return policy
 
 
-def build_mpc_control_policy(nx, nu, T, A, B, Q, R):
+def build_mpc_control_policy(nx, nu, T, A, B, Q, R, tau):
 
     x = cp.Variable((nx, T + 1))
     u = cp.Variable((nu, T))
@@ -36,8 +36,8 @@ def build_mpc_control_policy(nx, nu, T, A, B, Q, R):
     for t in range(T):
         cost += cp.quad_form(x[:, t + 1], Q)
         cost += cp.quad_form(u[:, t], R)
-        constr += [x[:, t + 1] == A @ x[:, t] + B @ u[:, t]]
-        constr += [cp.norm(u[:, t], 'inf') <= 1.0]
+        constr += [x[:, t + 1] == (x[:, t] + tau * (A @ x[:, t] + B @ u[:, t]))]
+        #constr += [cp.norm(u[:, t], 'inf') <= 1.0]
     # print(x0)
     constr += [x[:, 0] == x_0]
     prob = cp.Problem(cp.Minimize(cost), constr)
@@ -58,6 +58,7 @@ def get_model_matrix(env, delta_t=1.0, add_identity=True):
     M = float(env.masscart)
     l_bar = float(env.length)
     g = float(env.gravity)
+    
     # Model Parameter
     A = np.array([
         [0.0, 1.0, 0.0, 0.0],
@@ -89,14 +90,14 @@ def main():
     R = np.diag([1.0])
     nx = 4
     nu = 1
-    T = 10
+    T = 25
     control_method = 'mpc'
     if control_method == 'lqr':
-        A, B = get_model_matrix(env, add_identity=False)
+        A, B = get_model_matrix(env, delta_t=1.0, add_identity=False)
         policy = build_lqr_policy(Q, R, A, B)
     else:
-        A, B = get_model_matrix(env, delta_t=1.0, add_identity=True)
-        policy = build_mpc_control_policy(nx, nu, T, A, B, Q, R)
+        A, B = get_model_matrix(env, delta_t=1.0, add_identity=False)
+        policy = build_mpc_control_policy(nx, nu, T, A, B, Q, R, env.tau)
 
     episode_rewards = []
     for i in tqdm.tqdm(range(10)):
@@ -110,7 +111,7 @@ def main():
             state, reward, terminated, truncated, _ = env.step([action])
 
             episode_reward += reward
-            #env.render()
+            # env.render()
         episode_rewards.append(episode_reward)
     print(np.mean(episode_rewards))
 
