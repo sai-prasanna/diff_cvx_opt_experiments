@@ -37,7 +37,7 @@ def build_mpc_control_policy(nx, nu, T, A, B, Q, R, tau):
         cost += cp.quad_form(x[:, t + 1], Q)
         cost += cp.quad_form(u[:, t], R)
         constr += [x[:, t + 1] == (x[:, t] + tau * (A @ x[:, t] + B @ u[:, t]))]
-        #constr += [cp.norm(u[:, t], 'inf') <= 1.0]
+        constr += [cp.norm(u[:, t], 'inf') <= 1.0]
     # print(x0)
     constr += [x[:, 0] == x_0]
     prob = cp.Problem(cp.Minimize(cost), constr)
@@ -53,7 +53,7 @@ def build_mpc_control_policy(nx, nu, T, A, B, Q, R, tau):
     return policy
 
 
-def get_model_matrix(env, delta_t=1.0, add_identity=True):
+def get_model_matrix(env):
     m = float(env.masspole)
     M = float(env.masscart)
     l_bar = float(env.length)
@@ -66,16 +66,12 @@ def get_model_matrix(env, delta_t=1.0, add_identity=True):
         [0.0, 0.0, 0.0, 1.0],
         [0.0, 0.0, g * (M + m) / (l_bar * M), 0.0]
     ])
-    A = delta_t * A
-    if add_identity:
-        A += np.identity(4)
     B = np.array([
         [0.0],
         [1.0 / M],
         [0.0],
         [-1.0 / (l_bar * M)]
     ])
-    B = delta_t * B
 
     return A, B
 
@@ -84,8 +80,7 @@ def main():
     random.seed(42)
     env = CartPoleEnv()
     env = gym.wrappers.TimeLimit(env, max_episode_steps=200)
-
-    
+    A, B = get_model_matrix(env)
     Q = np.diag([1.0, 1.0, 1.0, 1.0])
     R = np.diag([1.0])
     nx = 4
@@ -93,10 +88,8 @@ def main():
     T = 25
     control_method = 'mpc'
     if control_method == 'lqr':
-        A, B = get_model_matrix(env, delta_t=1.0, add_identity=False)
         policy = build_lqr_policy(Q, R, A, B)
     else:
-        A, B = get_model_matrix(env, delta_t=1.0, add_identity=False)
         policy = build_mpc_control_policy(nx, nu, T, A, B, Q, R, env.tau)
 
     episode_rewards = []
