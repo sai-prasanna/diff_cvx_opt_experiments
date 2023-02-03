@@ -1,11 +1,9 @@
 import random
 import tqdm
 from continuous_cartpole_env import CartPoleEnv
-import torch
 import cvxpy as cp
 from cvxpylayers.torch import CvxpyLayer
 import warnings
-import torch.nn as nn
 import gymnasium as gym
 import numpy as np
 import time
@@ -49,7 +47,12 @@ def build_mpc_control_policy(nx, nu, T, A, B, Q, R, tau):
             warnings.warn("Solver did not converge!")
             return 0
         ou = np.array(u.value[0, :]).flatten()
-        return ou[0]
+        x_t = np.array(x.value[:, 1]).flatten()
+        
+        c = (cp.quad_form(x[:, 1],Q)+cp.quad_form(u[:, 0],R)).value
+
+        return x_t, ou[0], c
+
     return policy
 
 
