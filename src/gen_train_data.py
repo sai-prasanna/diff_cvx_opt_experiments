@@ -15,7 +15,7 @@ import pickle
 if __name__=="__main__":
     random.seed(42)
     env = CartPoleEnv()
-    env = gym.wrappers.TimeLimit(env, max_episode_steps=1)
+    env = gym.wrappers.TimeLimit(env, max_episode_steps=20)
     A, B = get_model_matrix(env)
     Q = np.diag([1.0, 1.0, 1.0, 1.0])
     R = np.diag([1.0])
@@ -28,19 +28,16 @@ if __name__=="__main__":
     data=[]
     episode_rewards = []
 
-    for i in tqdm.tqdm(range(1)):
+    for i in tqdm.tqdm(range(1000)):
         state, _ = env.reset()
-        print(state)
         episode_reward = 0
         terminated = False
         truncated = False
         while not (terminated or truncated):
             nstate, action, cost = policy(state)
             action = np.clip(action, -1.0, 1.0)
+            data.append([state, nstate, action, cost])
             state, reward, terminated, truncated, _ = env.step([action])
-
-            data.append([nstate, action, cost])
-            print([nstate, action, cost])
             episode_reward += reward
             # env.render()
         episode_rewards.append(episode_reward)
