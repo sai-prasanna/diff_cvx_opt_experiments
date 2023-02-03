@@ -9,7 +9,7 @@ import warnings
 import gymnasium as gym
 import numpy as np
 import time
-
+import pickle
 import control
 
 
@@ -72,21 +72,25 @@ def main():
     nu = 1
     T = 25
     policy = build_mpc_control_policy(nx, nu, T, env.tau)
-    
-    env_params = [torch.tensor(3.0,requires_grad=True),torch.tensor(0.1,requires_grad=True),torch.tensor(0.5,requires_grad=True)]
+    mode = "mpc"
+    t_env_params = [3.0, 1.0, 0.7]
+    env_params = [1.0,0.1,0.5]
     Q = torch.eye((nx), requires_grad=True)
     R = torch.eye((nu), requires_grad=True)
     A, B = get_model_matrix(env_params)
-
-    params_list = [ Q, R, A, B]
+    A_hat, B_hat = get_model_matrix(t_env_params)
+    if mode=="sysid":
+        params_list = [A, B]
+    if mode=="mpc":
+        params_list = [Q, R, A, B]
     params = [{
                 'params': params_list,
                 'lr': 1e-2,
-                'alpha': 0.5,
-            }]
+               }]
     
     opt = optim.Adam(params)
-    state, _ = env.reset()
+
+    """state, _ = env.reset()
     state = torch.tensor([-0.04164756,  0.0237744,   0.04489669, -0.01397501])
     u_hat = torch.tensor(0.4061829582598139)
     #print(Q,R,A,B)
@@ -96,6 +100,28 @@ def main():
     im_loss.backward()
     opt.step()
     print(Q,R,A,B,env_params)
-    #print(np.diag(Q.data.numpy())@state.data.numpy())
+    #print(np.diag(Q.data.numpy())@state.data.numpy())"""
+
+    train_data = pickle.load(open('train.pkl', 'rb'))
+    print(A,B)
+    loss=0
+    for x0,x_hat,u_hat,cost in train_data[:1000]:
+        x0 = torch.tensor(x0)
+        x_hat = torch.tensor(x_hat)
+        u_hat = torch.tensor(u_hat)
+        u=policy(x0,Q,R,A,B)[0][0][0]
+        u = torch.clip(u, -1.0, 1.0)
+        if mode == "mpc":
+            im_loss=(u-u_hat).pow(2).mean()
+        if mode == "sysid":
+            x = x0 + env.tau * A @ x0 + B @ u.unsqueeze(0)
+            im_loss = (x-x_hat).pow(2).mean()
+        im_loss.backward()
+        opt.step()
+        loss+=im_loss.data
+        #print(im_loss.data)
+    print(A,B)
+    print(A_hat,B_hat)
+    print(loss/1000)
 if __name__ == '__main__':
     main()
