@@ -33,7 +33,8 @@ def build_mpc_control_policy(nx, nu, T, tau):
         #cost += cp.quad_form(u[:, t], R)
         #cost += x[:, t+1].H @ Q @ x[:, t+1] 
         #cost += u[:, t].H @ R @ u[:, t]
-        cost+=cp.sum(cp.multiply(Q, cp.square(x[:,t]))) + cp.sum(cp.multiply(R,cp.square(u[:,t])))
+        cost += cp.norm(Q@x[:,t+1] + R@u[:,t])
+        #cost+=cp.sum(cp.multiply(Q, cp.square(x[:,t+1]))) + cp.sum(cp.multiply(R,cp.square(u[:,t])))
         constr += [x[:, t + 1] == (x[:, t] + tau * (A @ x[:, t] + B @ u[:, t]))]
         constr += [cp.norm(u[:, t], 'inf') <= 1.0]
     # print(x0)
@@ -80,7 +81,7 @@ def main():
     R = torch.ones((nu), requires_grad=True)
     A, B = get_model_matrix(env_params)
 
-    params_list = [env_params, Q, R]
+    params_list = [env_params, Q, R, A, B]
     params = [{
                 'params': params_list,
                 'lr': 1e-2,
