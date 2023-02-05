@@ -109,7 +109,7 @@ def main():
         x0 = torch.tensor(x0)
         x_hat = torch.tensor(x_hat)
         u_hat = torch.tensor(u_hat)
-        u=policy(x0,Q,R,A,B)[0][0][0]
+        u = policy(x0,Q,R,A,B)[0][0][0]
         u = torch.clip(u, -1.0, 1.0)
         if mode == "mpc":
             im_loss=(u-u_hat).pow(2).mean()

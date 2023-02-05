@@ -17,8 +17,8 @@ def build_mpc_control_policy(nx, nu, T, tau):
     x = cp.Variable((nx, T + 1))
     u = cp.Variable((nu, T))
     x_0 = cp.Parameter(nx)
-    Q = cp.Parameter(nx,nonneg=True)
-    R = cp.Parameter(nu,nonneg=True)
+    Q = cp.Parameter((nx,nx),nonneg=True)
+    R = cp.Parameter((nu,nu),nonneg=True)
     A = cp.Parameter((nx, nx))
     B = cp.Parameter((nx, nu))
 
@@ -32,7 +32,8 @@ def build_mpc_control_policy(nx, nu, T, tau):
         #cost += cp.quad_form(u[:, t], R.value)
         #cost += x[:, t+1].H @ Q @ x[:, t+1] 
         #cost += u[:, t].H @ R @ u[:, t]
-        cost+=cp.sum(cp.multiply(Q, cp.square(x[:,t+1]))) + cp.multiply(R,cp.sum_squares(u[:,t]))
+        #cost+=cp.sum(cp.multiply(Q, cp.square(x[:,t+1]))) + cp.multiply(R,cp.sum_squares(u[:,t]))
+        cost += cp.norm(Q@x[:,t+1] + R@u[:,t])
         constr += [x[:, t + 1] == (x[:, t] + tau * (A @ x[:, t] + B @ u[:, t]))]
         constr += [cp.norm(u[:, t], 'inf') <= 1.0]
     # print(x0)
@@ -52,9 +53,9 @@ def build_mpc_control_policy(nx, nu, T, tau):
         ou = np.array(u.value[0, :]).flatten()
         x_t = np.array(x.value[:, 1]).flatten()
         
-        c = cp.sum(cp.multiply(Q, cp.square(x[:,1]))) + cp.multiply(R,cp.sum_squares(u[:,0]))
+        #c = cp.sum(cp.multiply(Q, cp.square(x[:,1]))) + cp.multiply(R,cp.sum_squares(u[:,0]))
 
-        return x_t, ou[0], c.value
+        return x_t, ou[0]
 
     return policy
 
@@ -84,17 +85,15 @@ def get_model_matrix(env_params):
 def main():
     random.seed(42)
     env = CartPoleEnv()
-    env = gym.wrappers.TimeLimit(env, max_episode_steps=1)            
+    env = gym.wrappers.TimeLimit(env, max_episode_steps=200)            
     nx = 4
     nu = 1
     T = 25
     env_params = torch.tensor(
-                        ( 3.0, 0.1, 1.0), requires_grad=True) #mass cart , masspole, length
-    Q = torch.ones((nx), requires_grad=True)
-    R = torch.ones((nu), requires_grad=True)
-    A = np.zeros((nx,nx))
-    B = np.zeros((nx,nu))
-    print(np.diag([1.0]))
+                        ( 1.0, 0.1, 0.5), requires_grad=True) #mass cart , masspole, length
+    Q = torch.eye((nx), requires_grad=True)
+    R = torch.eye((nu), requires_grad=True)
+    A, B = get_model_matrix(env_params.data.numpy())
     params_list = [env_params, Q, R]
     params = [{
                 'params': params_list,
@@ -106,6 +105,21 @@ def main():
     policy = build_mpc_control_policy(nx, nu, T, env.tau)
     state, _ = env.reset()
     print(policy(state,Q,R,A,B))
+    episode_rewards = []
+    for i in tqdm.tqdm(range(10)):
+        episode_reward = 0
+        state, _ = env.reset()
+        terminated = False
+        truncated = False
+        while not (terminated or truncated):
+            nstate, action = policy(state,Q,R,A,B)
+            action = np.clip(action, -1.0, 1.0)
+            state, reward, terminated, truncated, _ = env.step([action])
+
+            episode_reward += reward
+            # env.render()
+        episode_rewards.append(episode_reward)
+    print(np.mean(episode_rewards))
 
 if __name__ == '__main__':
     main()
