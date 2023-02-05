@@ -1,4 +1,6 @@
 import random
+import torch
+from torch import optim
 import tqdm
 from continuous_cartpole_env import CartPoleEnv
 import cvxpy as cp
@@ -7,13 +9,12 @@ import warnings
 import gymnasium as gym
 import numpy as np
 import time
-import torch
-from torch import optim
+import pickle
 import control
 
 
 
-def build_mpc_control_policy(nx, nu, T,Q, R, tau):
+def build_mpc_control_policy(nx, nu, T, Q,R, tau):
     x = cp.Variable((nx, T + 1))
     u = cp.Variable((nu, T))
     x_0 = cp.Parameter(nx)
@@ -28,64 +29,42 @@ def build_mpc_control_policy(nx, nu, T,Q, R, tau):
 
 
     for t in range(T):
-        cost += cp.quad_form(x[:, t + 1], Q)
-        cost += cp.quad_form(u[:, t], R)
+        #cost += cp.quad_form(x[:, t + 1], Q)
+        #cost += cp.quad_form(u[:, t], R)
         #cost += x[:, t+1].H @ Q @ x[:, t+1] 
         #cost += u[:, t].H @ R @ u[:, t]
-        #cost+=cp.sum(cp.multiply(Q, cp.square(x[:,t+1]))) + cp.multiply(R,cp.sum_squares(u[:,t]))
-        #cost += cp.norm(Q@x[:,t+1] + R@u[:,t])
+        cost += cp.norm(Q@x[:,t+1]) + cp.norm(R@u[:,t])
+
+        #cost+=cp.sum(cp.multiply(Q, cp.square(x[:,t+1]))) + cp.sum(cp.multiply(R,cp.square(u[:,t])))
         constr += [x[:, t + 1] == (x[:, t] + tau * (A @ x[:, t] + B @ u[:, t]))]
         constr += [cp.norm(u[:, t], 'inf') <= 1.0]
     # print(x0)
     constr += [x[:, 0] == x_0]
     prob = cp.Problem(cp.Minimize(cost), constr)
-    
-    def policy(x0, A_p, B_p):
-        x_0.value = x0
-        #Q.value = Q_p.data.numpy()
-        #R.value = R_p.data.numpy()
-        A.value = A_p
-        B.value = B_p
-        prob.solve(verbose=False)
-        if prob.status != cp.OPTIMAL:
-            warnings.warn("Solver did not converge!")
-            return 0
-        ou = np.array(u.value[0, :]).flatten()
-        x_t = np.array(x.value[:, 1]).flatten()
-        
-        #c = cp.sum(cp.multiply(Q, cp.square(x[:,1]))) + cp.multiply(R,cp.sum_squares(u[:,0]))
-
-        return x_t, ou[0]
-
-    return policy
+    return CvxpyLayer(prob, parameters=[x_0,A,B], variables=[u])
 
 def get_model_matrix(env_params):
     
     g = float(9.8)
-    M = env_params[0]
-    m = env_params[1]
-    l_bar = env_params[2]
+
 
     # Model Parameter
-    A = np.array([
-        [0.0, 1.0, 0.0, 0.0],
-        [0.0, 0.0, -m * g / M, 0.0],
-        [0.0, 0.0, 0.0, 1.0],
-        [0.0, 0.0, g * (M + m) / (l_bar * M), 0.0]
-    ])
-    B = np.array([
-        [0.0],
-        [1.0 / M],
-        [0.0],
-        [-1.0 / (l_bar * M)]
-    ])
+    A=torch.zeros((4,4),requires_grad=False)
+    A[0][1]=1.0
+    A[1][2]=env_params[1]*g/env_params[0]
+    A[2][3]=1.0
+    A[3][2]=g*(env_params[0]+env_params[1])/(env_params[2]*env_params[0])
+
+    B = torch.zeros((4,1),requires_grad=False)
+    B[1][0]=1.0/env_params[0]
+    B[3][0]=-1.0/(env_params[2]*env_params[0])
 
     return A, B
 
 def main():
     random.seed(42)
     env = CartPoleEnv()
-    env = gym.wrappers.TimeLimit(env, max_episode_steps=200)            
+    env = gym.wrappers.TimeLimit(env, max_episode_steps=1)            
     nx = 4
     nu = 1
     T = 25
@@ -93,32 +72,37 @@ def main():
                         ( 1.0, 0.1, 0.5), requires_grad=True) #mass cart , masspole, length
     Q = torch.eye((nx), requires_grad=True).data.numpy()
     R = torch.eye((nu), requires_grad=True).data.numpy()
-    A, B = get_model_matrix(env_params.data.numpy())
-    params_list = [env_params, Q, R]
+    A, B = get_model_matrix(env_params)
+    params_list = [env_params]
     params = [{
                 'params': params_list,
                 'lr': 1e-2,
                 'alpha': 0.5,
             }]
-    #opt = optim.RMSprop(params)
+    opt = optim.RMSprop(params)
 
     policy = build_mpc_control_policy(nx, nu, T,Q,R, env.tau)
-    state, _ = env.reset()
+    #state, _ = env.reset()
     #print(policy(state,Q,R,A,B))
     episode_rewards = []
-    for i in tqdm.tqdm(range(10)):
+    print(A.type())
+    for i in tqdm.tqdm(range(1)):
         episode_reward = 0
         state, _ = env.reset()
         terminated = False
         truncated = False
         while not (terminated or truncated):
-            nstate, action = policy(state,A,B)
-            action = np.clip(action, -1.0, 1.0)
-            state, reward, terminated, truncated, _ = env.step([action])
-
+            action = policy(torch.tensor(state),A,B)[0][0][0]
+            action = torch.clip(action, -1.0, 1.0)
+            loss = (action**2).sum()
+            loss.backward()
+            opt.step()
+            state, reward, terminated, truncated, _ = env.step([action.data.numpy()])
             episode_reward += reward
+           
             # env.render()
         episode_rewards.append(episode_reward)
+        print(env_params)
     print(np.mean(episode_rewards))
 
 if __name__ == '__main__':

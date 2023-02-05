@@ -33,7 +33,7 @@ def build_mpc_control_policy(nx, nu, T, tau):
         #cost += cp.quad_form(u[:, t], R)
         #cost += x[:, t+1].H @ Q @ x[:, t+1] 
         #cost += u[:, t].H @ R @ u[:, t]
-        cost += cp.norm(Q@x[:,t+1] + R@u[:,t])
+        cost += cp.norm(Q@x[:,t+1]) + cp.norm(R@u[:,t])
         #cost+=cp.sum(cp.multiply(Q, cp.square(x[:,t+1]))) + cp.sum(cp.multiply(R,cp.square(u[:,t])))
         constr += [x[:, t + 1] == (x[:, t] + tau * (A @ x[:, t] + B @ u[:, t]))]
         constr += [cp.norm(u[:, t], 'inf') <= 1.0]
@@ -45,23 +45,18 @@ def build_mpc_control_policy(nx, nu, T, tau):
 def get_model_matrix(env_params):
     
     g = float(9.8)
-    M = env_params[0]
-    m = env_params[1]
-    l_bar = env_params[2]
+
 
     # Model Parameter
-    A = torch.tensor([
-        [0.0, 1.0, 0.0, 0.0],
-        [0.0, 0.0, -m * g / M, 0.0],
-        [0.0, 0.0, 0.0, 1.0],
-        [0.0, 0.0, g * (M + m) / (l_bar * M), 0.0]
-    ],requires_grad=True)
-    B = torch.tensor([
-        [0.0],
-        [1.0 / M],
-        [0.0],
-        [-1.0 / (l_bar * M)]
-    ],requires_grad=True)
+    A=torch.zeros((4,4),requires_grad=False)
+    A[0][1]=1.0
+    A[1][2]=env_params[1]*g/env_params[0]
+    A[2][3]=1.0
+    A[3][2]=g*(env_params[0]+env_params[1])/(env_params[2]*env_params[0])
+
+    B = torch.zeros((4,1),requires_grad=False)
+    B[1][0]=1.0/env_params[0]
+    B[3][0]=-1.0/(env_params[2]*env_params[0])
 
     return A, B
 
@@ -71,18 +66,23 @@ def main():
     nx = 4
     nu = 1
     T = 25
+    mode = "sysid"
+    learn_cost = True
+
     policy = build_mpc_control_policy(nx, nu, T, env.tau)
-    mode = "mpc"
-    t_env_params = [3.0, 1.0, 0.7]
-    env_params = [1.0,0.1,0.5]
+    
+    env_params = torch.tensor(
+                        ( 1.0, 0.1, 0.5), requires_grad=True) #mass cart , masspole, length
     Q = torch.eye((nx), requires_grad=True)
     R = torch.eye((nu), requires_grad=True)
     A, B = get_model_matrix(env_params)
-    A_hat, B_hat = get_model_matrix(t_env_params)
+    
     if mode=="sysid":
-        params_list = [A, B]
+        params_list = [env_params]
     if mode=="mpc":
-        params_list = [Q, R, A, B]
+        params_list = [env_params]
+        if learn_cost:
+            params_list += [Q, R]
     params = [{
                 'params': params_list,
                 'lr': 1e-2,
@@ -90,38 +90,34 @@ def main():
     
     opt = optim.Adam(params)
 
-    """state, _ = env.reset()
-    state = torch.tensor([-0.04164756,  0.0237744,   0.04489669, -0.01397501])
-    u_hat = torch.tensor(0.4061829582598139)
-    #print(Q,R,A,B)
-    u=policy(torch.tensor(state),Q,R,A,B)[0][0][0]
-    u = torch.clip(u, -1.0, 1.0)
-    im_loss = (u-u_hat).pow(2).mean()
-    im_loss.backward()
-    opt.step()
-    print(Q,R,A,B,env_params)
-    #print(np.diag(Q.data.numpy())@state.data.numpy())"""
 
     train_data = pickle.load(open('train.pkl', 'rb'))
-    print(A,B)
-    loss=0
-    for x0,x_hat,u_hat,cost in train_data[:1000]:
+    loss_track=[]
+
+    for x0,x_hat,u_hat,cost in train_data[:10]:
+        opt.zero_grad()
         x0 = torch.tensor(x0)
         x_hat = torch.tensor(x_hat)
         u_hat = torch.tensor(u_hat)
         u = policy(x0,Q,R,A,B)[0][0][0]
         u = torch.clip(u, -1.0, 1.0)
         if mode == "mpc":
-            im_loss=(u-u_hat).pow(2).mean()
+            x = x0 + env.tau * A @ x0 + B @ u.unsqueeze(0)
+            im_loss = (u-u_hat).pow(2).mean()
+            state_loss = (x-x_hat).pow(2).mean()
+            loss=im_loss
         if mode == "sysid":
             x = x0 + env.tau * A @ x0 + B @ u.unsqueeze(0)
-            im_loss = (x-x_hat).pow(2).mean()
-        im_loss.backward()
+            state_loss = (x-x_hat).pow(2).mean()
+            im_loss = (u.detach()-u_hat).pow(2).mean()
+            loss=state_loss
+
+        loss.backward()
         opt.step()
-        loss+=im_loss.data
-        #print(im_loss.data)
-    print(A,B)
-    print(A_hat,B_hat)
-    print(loss/1000)
+        A.detach_()
+        B.detach_()
+        loss_track.append([im_loss.data, state_loss.data])
+    print(loss_track[-1])
+
 if __name__ == '__main__':
     main()
