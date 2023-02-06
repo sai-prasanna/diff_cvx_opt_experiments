@@ -61,6 +61,11 @@ def get_model_matrix(env):
     M = float(env.masscart)
     l_bar = float(env.length)
     g = float(env.gravity)
+    """m = 1.0
+    M = 3.0"""
+    #l_bar = 1.0
+    #g = 9.8
+    
     
     # Model Parameter
     A = np.array([
@@ -80,7 +85,7 @@ def get_model_matrix(env):
 
 
 def main():
-    random.seed(42)
+    random.seed(67)
     env = CartPoleEnv()
     env = gym.wrappers.TimeLimit(env, max_episode_steps=200)
     A, B = get_model_matrix(env)
@@ -96,13 +101,13 @@ def main():
         policy = build_mpc_control_policy(nx, nu, T, A, B, Q, R, env.tau)
 
     episode_rewards = []
-    for i in tqdm.tqdm(range(10)):
+    for i in tqdm.tqdm(range(100)):
         episode_reward = 0
         state, _ = env.reset()
         terminated = False
         truncated = False
         while not (terminated or truncated):
-            action = policy(state)
+            _,action,_ = policy(state)
             action = np.clip(action, -1.0, 1.0)
             state, reward, terminated, truncated, _ = env.step([action])
 

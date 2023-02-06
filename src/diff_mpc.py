@@ -46,8 +46,6 @@ def build_mpc_control_policy(nx, nu, T, tau):
 def get_model_matrix(env_params):
     
     g = float(9.8)
-
-
     # Model Parameter
     A=torch.zeros((4,4),requires_grad=False)
     A[0][1]=1.0
@@ -61,6 +59,19 @@ def get_model_matrix(env_params):
 
     return A, B
 
+def get_model_matrix_l(env_params):
+    l_bar = 1.0
+    A = torch.zeros((4, 4), requires_grad=False)
+    A[0][1] = 1.0
+    A[1][2] = env_params[1] * env_params[2] / env_params[0]
+    A[2][3] = 1.0
+    A[3][2] = env_params[2] * (env_params[0] + env_params[1]) / (l_bar * env_params[0])
+
+    B = torch.zeros((4, 1), requires_grad=False)
+    B[1][0] = 1.0 / env_params[0]
+    B[3][0] = -1.0 / (l_bar * env_params[0])
+
+    return A, B
 
 def main():
     random.seed(42)
@@ -69,18 +80,18 @@ def main():
     nu = 1
     
     T = 25
-    mode = "mpc"
-    learn_cost = True
+    mode = "mpc" #'mpc' or 'sysid'
+    learn_cost = False
     save_params = True
 
     policy = build_mpc_control_policy(nx, nu, T, env.tau)
     
     #params of mpc
-    env_params = torch.tensor(
-                        ( 1.0, 0.1, 0.5), requires_grad=True) #mass cart , masspole, length
+    #env_params = torch.tensor((1.0, 0.1, 0.5), requires_grad=True) #mass cart , masspole, length
+    env_params = torch.tensor((1.0, 0.1, 9.8), requires_grad=False) #mass cart , masspole, gravity
     Q = torch.eye((nx), requires_grad=True)
     R = torch.eye((nu), requires_grad=True)
-    A, B = get_model_matrix(env_params)
+    A, B = get_model_matrix_l(env_params)
     
     #optimizer and params to learn
     if mode=="sysid":
@@ -153,11 +164,14 @@ def main():
         B.detach_()
         loss_track.append([im_loss.data, state_loss.data])
     print(loss_track[-1])
+    
     if save_params:
         torch.save(loss_track, 'loss_track.pt')
         torch.save(Q, 'Q.pt')
         torch.save(R, 'R.pt')
         torch.save(A, 'A.pt')
         torch.save(B, 'B.pt')
+        torch.save(env_params, 'env_params.pt')
+
 if __name__ == '__main__':
     main()
