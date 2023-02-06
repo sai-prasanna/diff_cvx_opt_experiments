@@ -25,7 +25,7 @@ if __name__=="__main__":
     control_method = 'mpc'
     policy = build_mpc_control_policy(nx, nu, T, A, B, Q, R, env.tau)
 
-    data=[]
+    data=[[],[],[],[]]
     episode_rewards = []
 
     for i in tqdm.tqdm(range(1000)):
@@ -36,7 +36,10 @@ if __name__=="__main__":
         while not (terminated or truncated):
             nstate, action, cost = policy(state)
             action = np.clip(action, -1.0, 1.0)
-            data.append([state, nstate, action, cost])
+            data[0].append(state)
+            data[1].append(nstate)
+            data[2].append(action)
+            data[3].append(cost)
             state, reward, terminated, truncated, _ = env.step([action])
             episode_reward += reward
             # env.render()

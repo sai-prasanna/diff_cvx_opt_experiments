@@ -11,6 +11,7 @@ import numpy as np
 import time
 import pickle
 import control
+from torch.utils.data import TensorDataset, DataLoader
 
 
 
@@ -60,23 +61,28 @@ def get_model_matrix(env_params):
 
     return A, B
 
+
 def main():
     random.seed(42)
     env = CartPoleEnv()
     nx = 4
     nu = 1
+    
     T = 25
-    mode = "sysid"
+    mode = "mpc"
     learn_cost = True
+    save_params = True
 
     policy = build_mpc_control_policy(nx, nu, T, env.tau)
     
+    #params of mpc
     env_params = torch.tensor(
                         ( 1.0, 0.1, 0.5), requires_grad=True) #mass cart , masspole, length
     Q = torch.eye((nx), requires_grad=True)
     R = torch.eye((nu), requires_grad=True)
     A, B = get_model_matrix(env_params)
     
+    #optimizer and params to learn
     if mode=="sysid":
         params_list = [env_params]
     if mode=="mpc":
@@ -91,33 +97,67 @@ def main():
     opt = optim.Adam(params)
 
 
+    
+
+    
+    #Dataset hparams
+    batch_size = 100
+    n_data = 1000
+
+    #load data
     train_data = pickle.load(open('train.pkl', 'rb'))
+    x0_train = torch.tensor(train_data[0][:n_data])
+    x_hat_train = torch.tensor(train_data[1][:n_data])
+    u_hat_train = torch.tensor(train_data[2][:n_data])
+    cost_train = torch.tensor(train_data[3][:n_data])
+    train_data = TensorDataset(x0_train, x_hat_train, u_hat_train, cost_train)
+    trainLoader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
+    
+    #repeat params for batch_size
+    if batch_size>1:
+        Q=Q.repeat(batch_size, 1, 1)
+        R=R.repeat(batch_size, 1, 1)
+        A=A.repeat(batch_size, 1, 1)
+        B=B.repeat(batch_size, 1, 1)
+    
+
     loss_track=[]
 
-    for x0,x_hat,u_hat,cost in train_data[:10]:
+    #train loop
+    for i,(x0,x_hat,u_hat,cost) in enumerate(trainLoader):
         opt.zero_grad()
-        x0 = torch.tensor(x0)
-        x_hat = torch.tensor(x_hat)
-        u_hat = torch.tensor(u_hat)
-        u = policy(x0,Q,R,A,B)[0][0][0]
-        u = torch.clip(u, -1.0, 1.0)
-        if mode == "mpc":
+        
+        if batch_size>1:
+            u = policy(x0,Q,R,A,B)[0][:,0,0].unsqueeze(1)
+            u = torch.clip(u, -1.0, 1.0)
+            x = x0 + env.tau * torch.bmm(A, x0.unsqueeze(2)).squeeze(2) + torch.bmm(B, u.unsqueeze(1)).squeeze(2)
+        
+        else:
+            u = policy(x0,Q,R,A,B)[0][0][0]
+            u = torch.clip(u, -1.0, 1.0)
             x = x0 + env.tau * A @ x0 + B @ u.unsqueeze(0)
-            im_loss = (u-u_hat).pow(2).mean()
-            state_loss = (x-x_hat).pow(2).mean()
-            loss=im_loss
-        if mode == "sysid":
-            x = x0 + env.tau * A @ x0 + B @ u.unsqueeze(0)
+        
+        if mode == "mpc":             
+                im_loss = (u-u_hat).pow(2).mean()
+                state_loss = (x-x_hat).pow(2).mean()
+                loss=im_loss
+        
+        elif mode == "sysid":
             state_loss = (x-x_hat).pow(2).mean()
             im_loss = (u.detach()-u_hat).pow(2).mean()
             loss=state_loss
-
+            
         loss.backward()
         opt.step()
         A.detach_()
         B.detach_()
         loss_track.append([im_loss.data, state_loss.data])
     print(loss_track[-1])
-
+    if save_params:
+        torch.save(loss_track, 'loss_track.pt')
+        torch.save(Q, 'Q.pt')
+        torch.save(R, 'R.pt')
+        torch.save(A, 'A.pt')
+        torch.save(B, 'B.pt')
 if __name__ == '__main__':
     main()
