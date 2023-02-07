@@ -7,7 +7,7 @@ import warnings
 import gymnasium as gym
 import numpy as np
 import time
-
+import torch
 import control
 
 
@@ -56,10 +56,9 @@ def build_mpc_control_policy(nx, nu, T, A, B, Q, R, tau):
     return policy
 
 
-def get_model_matrix(env,multi,algo):
+def get_model_matrix(env):
     
     m = float(env.masspole)
-
     M = float(env.masscart)
   
     l_bar = float(env.length)
@@ -98,7 +97,7 @@ def main():
     nx = 4
     nu = 1
     T = 25
-    control_method = 'mpc'
+    control_method = 'lqr'
     if control_method == 'lqr':
         policy = build_lqr_policy(Q, R, A, B)
     else:
@@ -114,16 +113,11 @@ def main():
             _,action,_ = policy(state)
             action = np.clip(action, -1.0, 1.0)
             state, reward, terminated, truncated, _ = env.step([action])
+            episode_reward += reward
+            # env.render()
+            episode_rewards.append(episode_reward)
+    print(f":{np.mean(episode_rewards)}")
 
-                    episode_reward += reward
-                    # env.render()
-                episode_rewards.append(episode_reward)
-            data[0].append(name)
-            data[1].append(multi[idx])
-            data[2].append(np.mean(episode_rewards))
-            print(f"{name}: {multi[idx]}:{np.mean(episode_rewards)}")
-            print(data)
-    print(data)
 
 if __name__ == '__main__':
     main()

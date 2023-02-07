@@ -15,7 +15,7 @@ import pickle
 if __name__=="__main__":
     random.seed(42)
     env = CartPoleEnv()
-    env = gym.wrappers.TimeLimit(env, max_episode_steps=20)
+    env = gym.wrappers.TimeLimit(env, max_episode_steps=200)
     A, B = get_model_matrix(env)
     Q = np.diag([1.0, 1.0, 1.0, 1.0])
     R = np.diag([1.0])
@@ -44,5 +44,5 @@ if __name__=="__main__":
             episode_reward += reward
             # env.render()
         episode_rewards.append(episode_reward)
-    pickle.dump(data, open("train.pkl", "wb"))
+    pickle.dump(data, open("train_200.pkl", "wb"))
     print(np.mean(episode_rewards))
