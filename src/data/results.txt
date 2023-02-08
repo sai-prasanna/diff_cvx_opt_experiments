@@ -1,0 +1,94 @@
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc_4.py
+  0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
+  gym.logger.warn("Casting input x to numpy array.")
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:02<00:00,  3.89it/s]
+46.2
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc_4.py
+  0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
+  gym.logger.warn("Casting input x to numpy array.")
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:02<00:00,  4.24it/s]
+39.5
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/se 
+sedd_70_noise/ seed_70/       
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/sedd_70_noise/mpc4/model_state_e_0.pt 
+tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
+        [ 0.0000,  0.0000, -0.1135,  0.0000],
+        [ 0.0000,  0.0000,  0.0000,  1.0000],
+        [ 0.0000,  0.0000, 19.5950,  0.0000]], requires_grad=True) tensor([[ 0.0000],
+        [ 1.1819],
+        [ 0.0000],
+        [-1.9699]], requires_grad=True)
+(array([[ 0.  ,  1.  ,  0.  ,  0.  ],
+       [ 0.  ,  0.  , -0.98,  0.  ],
+       [ 0.  ,  0.  ,  0.  ,  1.  ],
+       [ 0.  ,  0.  , 21.56,  0.  ]]), array([[ 0.],
+       [ 1.],
+       [ 0.],
+       [-2.]]))
+tensor([8.4607e-01, 8.2509e-03, 1.1643e+01], dtype=torch.float64,
+       requires_grad=True)
+  0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
+  gym.logger.warn("Casting input x to numpy array.")
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:10<00:00,  1.10s/it]
+mean reward:181.6
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/sedd_70_noise/sysid2/model_state_e_0.pt 
+tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
+        [ 0.0000,  0.0000, -0.3702,  0.0000],
+        [ 0.0000,  0.0000,  0.0000,  1.0000],
+        [ 0.0000,  0.0000, 20.3274,  0.0000]], requires_grad=True) tensor([[ 0.0000],
+        [ 0.2292],
+        [ 0.0000],
+        [-0.3820]], requires_grad=True)
+(array([[ 0.  ,  1.  ,  0.  ,  0.  ],
+       [ 0.  ,  0.  , -0.98,  0.  ],
+       [ 0.  ,  0.  ,  0.  ,  1.  ],
+       [ 0.  ,  0.  , 21.56,  0.  ]]), array([[ 0.],
+       [ 1.],
+       [ 0.],
+       [-2.]]))
+tensor([ 4.3634,  0.1366, 11.8263], dtype=torch.float64, requires_grad=True)
+  0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
+  gym.logger.warn("Casting input x to numpy array.")
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:02<00:00,  4.02it/s]
+mean reward:45.8
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/seed_70/mpc4/model_state_e_0.pt 
+tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
+        [ 0.0000,  0.0000, -9.0367,  0.0000],
+        [ 0.0000,  0.0000,  0.0000,  1.0000],
+        [ 0.0000,  0.0000, 48.7705,  0.0000]], requires_grad=True) tensor([[ 0.0000],
+        [ 0.3628],
+        [ 0.0000],
+        [-0.6046]], requires_grad=True)
+(array([[ 0.  ,  1.  ,  0.  ,  0.  ],
+       [ 0.  ,  0.  , -0.98,  0.  ],
+       [ 0.  ,  0.  ,  0.  ,  1.  ],
+       [ 0.  ,  0.  , 21.56,  0.  ]]), array([[ 0.],
+       [ 1.],
+       [ 0.],
+       [-2.]]))
+tensor([ 2.7566,  1.2316, 20.2256], dtype=torch.float64, requires_grad=True)
+  0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
+  gym.logger.warn("Casting input x to numpy array.")
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:12<00:00,  1.28s/it]
+mean reward:200.0
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/seed_70/sysid/model_state_e_0.pt 
+tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
+        [ 0.0000,  0.0000, -3.0676,  0.0000],
+        [ 0.0000,  0.0000,  0.0000,  1.0000],
+        [ 0.0000,  0.0000, 38.2595,  0.0000]], requires_grad=True) tensor([[ 0.0000],
+        [ 0.1712],
+        [ 0.0000],
+        [-0.2854]], requires_grad=True)
+(array([[ 0.  ,  1.  ,  0.  ,  0.  ],
+       [ 0.  ,  0.  , -0.98,  0.  ],
+       [ 0.  ,  0.  ,  0.  ,  1.  ],
+       [ 0.  ,  0.  , 21.56,  0.  ]]), array([[ 0.],
+       [ 1.],
+       [ 0.],
+       [-2.]]))
+tensor([ 5.8401,  0.9008, 19.8881], dtype=torch.float64, requires_grad=True)
+  0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
+  gym.logger.warn("Casting input x to numpy array.")
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:02<00:00,  4.27it/s]
+mean reward:40.4
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ 

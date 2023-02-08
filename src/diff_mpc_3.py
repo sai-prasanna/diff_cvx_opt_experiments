@@ -46,8 +46,6 @@ def build_mpc_control_policy(nx, nu, T, Q,R, tau):
 def get_model_matrix(env_params):
     
     g = float(9.8)
-
-
     # Model Parameter
     A=torch.zeros((4,4),requires_grad=False)
     A[0][1]=1.0
@@ -64,7 +62,7 @@ def get_model_matrix(env_params):
 def main():
     random.seed(42)
     env = CartPoleEnv()
-    env = gym.wrappers.TimeLimit(env, max_episode_steps=1)            
+    env = gym.wrappers.TimeLimit(env, max_episode_steps=200)            
     nx = 4
     nu = 1
     T = 25
@@ -85,8 +83,7 @@ def main():
     #state, _ = env.reset()
     #print(policy(state,Q,R,A,B))
     episode_rewards = []
-    print(A.type())
-    for i in tqdm.tqdm(range(1)):
+    for i in tqdm.tqdm(range(10)):
         episode_reward = 0
         state, _ = env.reset()
         terminated = False
@@ -94,15 +91,11 @@ def main():
         while not (terminated or truncated):
             action = policy(torch.tensor(state),A,B)[0][0][0]
             action = torch.clip(action, -1.0, 1.0)
-            loss = (action**2).sum()
-            loss.backward()
-            opt.step()
             state, reward, terminated, truncated, _ = env.step([action.data.numpy()])
             episode_reward += reward
            
             # env.render()
         episode_rewards.append(episode_reward)
-        print(env_params)
     print(np.mean(episode_rewards))
 
 if __name__ == '__main__':

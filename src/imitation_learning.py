@@ -32,8 +32,9 @@ def build_mpc_control_policy(nx, nu, T, A, B, Q, R, tau):
     cost = 0.0
     constr = []
     for t in range(T):
-        cost += cp.quad_form(x[:, t + 1], Q)
-        cost += cp.quad_form(u[:, t], R)
+        #cost += cp.quad_form(x[:, t + 1], Q)
+        #cost += cp.quad_form(u[:, t], R)
+        cost += cp.square(cp.norm(Q@x[:,t+1])) + cp.square(cp.norm(R@u[:,t]))
         constr += [x[:, t + 1] == (x[:, t] + tau * (A @ x[:, t] + B @ u[:, t]))]
         constr += [cp.norm(u[:, t], 'inf') <= 1.0]
     # print(x0)
@@ -60,14 +61,13 @@ def get_model_matrix(env):
     
     m = float(env.masspole)
     M = float(env.masscart)
-  
     l_bar = float(env.length)
-  
     g = float(env.gravity)
-    """m = 1.0
-    M = 3.0"""
-    #l_bar = 1.0
-    #g = 9.8
+
+    #m = 1.0
+    #M = 1.0
+    #l_bar = 0.8
+    #g = 10.0
     
     
     # Model Parameter
@@ -88,7 +88,7 @@ def get_model_matrix(env):
 
 
 def main():
-    random.seed(67)
+    random.seed(42)
     env = CartPoleEnv()
     env = gym.wrappers.TimeLimit(env, max_episode_steps=200)
     A, B = get_model_matrix(env)
@@ -97,25 +97,27 @@ def main():
     nx = 4
     nu = 1
     T = 25
-    control_method = 'lqr'
+    control_method = 'mpc'
     if control_method == 'lqr':
         policy = build_lqr_policy(Q, R, A, B)
     else:
         policy = build_mpc_control_policy(nx, nu, T, A, B, Q, R, env.tau)
 
     episode_rewards = []
-    for i in tqdm.tqdm(range(100)):
+    for i in tqdm.tqdm(range(10)):
         episode_reward = 0
         state, _ = env.reset()
+        #state = np.array([-0.00756797, -0.00285175,  0.03924649,  0.03471813])
+        #print(state)
         terminated = False
         truncated = False
         while not (terminated or truncated):
             _,action,_ = policy(state)
-            action = np.clip(action, -1.0, 1.0)
+            #action = np.clip(action, -1.0, 1.0)
             state, reward, terminated, truncated, _ = env.step([action])
             episode_reward += reward
             # env.render()
-            episode_rewards.append(episode_reward)
+        episode_rewards.append(episode_reward)
     print(f":{np.mean(episode_rewards)}")
 
 
