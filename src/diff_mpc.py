@@ -161,7 +161,7 @@ def train(mode,seed,learn_cost):
     val_state_loss_list = []
 
     #run_name=str(time.time())
-    run_name='mpc4'
+    run_name=mode+str(seed)
     data_path = './src/data/'+run_name
     os.mkdir(data_path)
     #train loop
@@ -203,7 +203,7 @@ def train(mode,seed,learn_cost):
             loss_track.append(loss.item())
             im_loss_list.append(im_loss.item())
             state_loss_list.append(state_loss.item())
-            if i%1000==0:
+            if i%1000==0 or i==len(trainLoader)-1:
                 with torch.no_grad():
                     val_loss=0
                     state_val_loss=0

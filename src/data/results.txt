@@ -1,16 +1,105 @@
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc.py --mode mpc  --seed 70
+[ 1.86221302  0.175761   11.8658343 ]
+/home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc.py:133: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:230.)
+  x0_train = torch.tensor(data[0][:n_data])
+  0%|             epoch:0 batch: 0, val_loss: 0.7553719326756254, val_im_loss: 0.7553719326756254, val_state_loss: 1.1159320376328539                                        | 0/1 [00:00<?, ?it/s]
+0it [00:00, ?it/s]      epoch:0 batch: 1000, val_loss: 0.7553702091902484, val_im_loss: 0.7553702091902484, val_state_loss: 1.095910190609477
+999it [00:19, 67.17it/s] epoch:0 batch: 2000, val_loss: 0.7553677547686981, val_im_loss: 0.7553677547686981, val_state_loss: 1.1983796592973788
+1996it [00:39, 71.66it/s]epoch:0 batch: 3000, val_loss: 0.4032349811721423, val_im_loss: 0.4032349811721423, val_state_loss: 1.4013819189224554
+2994it [01:00, 65.73it/s]epoch:0 batch: 4000, val_loss: 0.17735991851859298, val_im_loss: 0.17735991851859298, val_state_loss: 1.596922913398373
+3996it [01:21, 60.34it/s]epoch:0 batch: 4999, val_loss: 0.02080586006391253, val_im_loss: 0.02080586006391253, val_state_loss: 1.8664622566870643
+5000it [01:50, 45.38it/s]
+epoch: 0, val_loss: 0.02080586006391253, val_im_loss: 0.02080586006391253, val_state_loss: 1.8664622566870643
+tensor([8.4607e-01, 8.2509e-03, 1.1643e+01], dtype=torch.float64,
+       requires_grad=True)
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:50<00:00, 110.19s/it]
+{'batch_size': 1, 'lr': 0.001, 'epoch': 1, 'n_data': 5000, 'mode': 'mpc', 'seed': 70, 'learn_cost': False, 'n_val': 1000}
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc.py --mode sysid  --seed 70
+[ 1.86221302  0.175761   11.8658343 ]
+/home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc.py:133: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:230.)
+  x0_train = torch.tensor(data[0][:n_data])
+  0%|             epoch:0 batch: 0, val_loss: 1.1159308143528104, val_im_loss: 0.7553719704515843, val_state_loss: 1.1159308143528104                                        | 0/1 [00:00<?, ?it/s]
+0it [00:00, ?it/s]       epoch:0 batch: 1000, val_loss: 1.0321050606454878, val_im_loss: 0.7553718660344617, val_state_loss: 1.0321050606454878
+988it [00:11, 167.44it/s] epoch:0 batch: 2000, val_loss: 1.0015927561843259, val_im_loss: 0.7553721955767466, val_state_loss: 1.0015927561843259
+1994it [00:22, 167.71it/s]epoch:0 batch: 3000, val_loss: 0.9853064240733058, val_im_loss: 0.7553718905110598, val_state_loss: 0.9853064240733058
+2997it [00:34, 167.85it/s]epoch:0 batch: 4000, val_loss: 0.9746511935846591, val_im_loss: 0.7553720178784711, val_state_loss: 0.9746511935846591
+3997it [00:45, 163.32it/s]epoch:0 batch: 4999, val_loss: 0.9672794342041812, val_im_loss: 0.7553722007570541, val_state_loss: 0.9672794342041812
+5000it [01:02, 79.71it/s] 
+epoch: 0, val_loss: 0.9672794342041812, val_im_loss: 0.7553722007570541, val_state_loss: 0.9672794342041812
+tensor([ 4.3634,  0.1366, 11.8263], dtype=torch.float64, requires_grad=True)
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:02<00:00, 62.73s/it]
+{'batch_size': 1, 'lr': 0.001, 'epoch': 1, 'n_data': 5000, 'mode': 'sysid', 'seed': 70, 'learn_cost': False, 'n_val': 1000}
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc.py --mode mpc  --seed 98
+[1.49130777 0.11776591 6.58878883]
+/home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc.py:133: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:230.)
+  x0_train = torch.tensor(data[0][:n_data])
+  0%|             epoch:0 batch: 0, val_loss: 0.7553678105344337, val_im_loss: 0.7553678105344337, val_state_loss: 1.2225016564028872                                        | 0/1 [00:00<?, ?it/s]
+0it [00:00, ?it/s]      epoch:0 batch: 1000, val_loss: 0.755366454753147, val_im_loss: 0.755366454753147, val_state_loss: 1.2319349695755666
+999it [00:19, 66.76it/s] epoch:0 batch: 2000, val_loss: 0.3656150716192907, val_im_loss: 0.3656150716192907, val_state_loss: 1.5140747645506767
+1998it [00:40, 60.66it/s]epoch:0 batch: 3000, val_loss: 0.18039834037359073, val_im_loss: 0.18039834037359073, val_state_loss: 1.7628629243416252
+2998it [01:01, 63.20it/s]epoch:0 batch: 4000, val_loss: 0.10925036027560082, val_im_loss: 0.10925036027560082, val_state_loss: 1.9987868589529874
+3995it [01:24, 59.30it/s]epoch:0 batch: 4999, val_loss: 0.029506918768924598, val_im_loss: 0.029506918768924598, val_state_loss: 2.333830630554548
+5000it [01:54, 43.50it/s]
+epoch: 0, val_loss: 0.029506918768924598, val_im_loss: 0.029506918768924598, val_state_loss: 2.333830630554548
+tensor([0.6942, 0.3086, 6.8016], dtype=torch.float64, requires_grad=True)
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:54<00:00, 114.95s/it]
+{'batch_size': 1, 'lr': 0.001, 'epoch': 1, 'n_data': 5000, 'mode': 'mpc', 'seed': 98, 'learn_cost': False, 'n_val': 1000}
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc.py --mode sysid  --seed 98
+[1.49130777 0.11776591 6.58878883]
+/home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc.py:133: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:230.)
+  x0_train = torch.tensor(data[0][:n_data])
+  0%|             epoch:0 batch: 0, val_loss: 1.2225005538923972, val_im_loss: 0.7553678105642356, val_state_loss: 1.2225005538923972                                        | 0/1 [00:00<?, ?it/s]
+0it [00:00, ?it/s]       epoch:0 batch: 1000, val_loss: 1.0723497828339044, val_im_loss: 0.7553698337950606, val_state_loss: 1.0723497828339044
+999it [00:11, 170.74it/s] epoch:0 batch: 2000, val_loss: 1.0261485458934276, val_im_loss: 0.7553702328780848, val_state_loss: 1.0261485458934276
+1993it [00:22, 168.13it/s]epoch:0 batch: 3000, val_loss: 1.0021690445226537, val_im_loss: 0.7553711144245226, val_state_loss: 1.0021690445226537
+2994it [00:33, 169.40it/s]epoch:0 batch: 4000, val_loss: 0.9872143944486165, val_im_loss: 0.755371363193242, val_state_loss: 0.9872143944486165
+3985it [00:44, 170.31it/s]epoch:0 batch: 4999, val_loss: 0.9768197908071882, val_im_loss: 0.7553717080543102, val_state_loss: 0.9768197908071882
+5000it [01:01, 81.66it/s] 
+epoch: 0, val_loss: 0.9768197908071882, val_im_loss: 0.7553717080543102, val_state_loss: 0.9768197908071882
+tensor([3.8171, 0.1152, 6.5920], dtype=torch.float64, requires_grad=True)
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:01<00:00, 61.23s/it]
+{'batch_size': 1, 'lr': 0.001, 'epoch': 1, 'n_data': 5000, 'mode': 'sysid', 'seed': 98, 'learn_cost': False, 'n_val': 1000}
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc.py --mode mpc  --seed 127
+[1.09528331 0.01759297 4.44267411]
+/home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc.py:133: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:230.)
+  x0_train = torch.tensor(data[0][:n_data])
+  0%|             epoch:0 batch: 0, val_loss: 0.4076480784145228, val_im_loss: 0.4076480784145228, val_state_loss: 1.482627102040967                                         | 0/1 [00:00<?, ?it/s]
+0it [00:00, ?it/s]      epoch:0 batch: 1000, val_loss: 0.217110572955154, val_im_loss: 0.217110572955154, val_state_loss: 1.7200576711547049
+995it [00:22, 58.38it/s] epoch:0 batch: 2000, val_loss: 0.1264155442678121, val_im_loss: 0.1264155442678121, val_state_loss: 2.001097092283208
+1999it [00:46, 51.01it/s]epoch:0 batch: 3000, val_loss: 0.0537719338140042, val_im_loss: 0.0537719338140042, val_state_loss: 2.4572705944856112
+2995it [01:10, 51.41it/s]epoch:0 batch: 4000, val_loss: 0.02911332982109883, val_im_loss: 0.02911332982109883, val_state_loss: 2.605487026992757
+3999it [01:38, 52.61it/s]epoch:0 batch: 4999, val_loss: 0.02845799277038865, val_im_loss: 0.02845799277038865, val_state_loss: 2.4824517708497784
+5000it [02:09, 38.47it/s]
+epoch: 0, val_loss: 0.02845799277038865, val_im_loss: 0.02845799277038865, val_state_loss: 2.4824517708497784
+tensor([0.6609, 0.6050, 5.0805], dtype=torch.float64, requires_grad=True)
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [02:09<00:00, 129.99s/it]
+{'batch_size': 1, 'lr': 0.001, 'epoch': 1, 'n_data': 5000, 'mode': 'mpc', 'seed': 127, 'learn_cost': False, 'n_val': 1000}
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc.py --mode sysid  --seed 127
+[1.09528331 0.01759297 4.44267411]
+/home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc.py:133: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:230.)
+  x0_train = torch.tensor(data[0][:n_data])
+  0%|             epoch:0 batch: 0, val_loss: 1.4805667101111812, val_im_loss: 0.4117521588526893, val_state_loss: 1.4805667101111812                                        | 0/1 [00:00<?, ?it/s]
+0it [00:00, ?it/s]       epoch:0 batch: 1000, val_loss: 1.155875442919478, val_im_loss: 0.7553600360275714, val_state_loss: 1.155875442919478
+999it [00:12, 156.10it/s] epoch:0 batch: 2000, val_loss: 1.0757261052535898, val_im_loss: 0.7553639879898885, val_state_loss: 1.0757261052535898
+1999it [00:24, 173.16it/s]epoch:0 batch: 3000, val_loss: 1.03498206378925, val_im_loss: 0.7553656593043017, val_state_loss: 1.03498206378925
+2986it [00:35, 172.33it/s]epoch:0 batch: 4000, val_loss: 1.011030671587344, val_im_loss: 0.7553669202613632, val_state_loss: 1.011030671587344
+3993it [00:46, 173.92it/s]epoch:0 batch: 4999, val_loss: 0.9947353020904113, val_im_loss: 0.7553675947471937, val_state_loss: 0.9947353020904113
+5000it [01:02, 80.35it/s] 
+epoch: 0, val_loss: 0.9947353020904113, val_im_loss: 0.7553675947471937, val_state_loss: 0.9947353020904113
+tensor([ 3.1910, -0.0062,  4.4355], dtype=torch.float64, requires_grad=True)
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [01:02<00:00, 62.23s/it]
+{'batch_size': 1, 'lr': 0.001, 'epoch': 1, 'n_data': 5000, 'mode': 'sysid', 'seed': 127, 'learn_cost': False, 'n_val': 1000}
 (no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc_4.py
   0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
   gym.logger.warn("Casting input x to numpy array.")
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:02<00:00,  3.89it/s]
-46.2
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:10<00:00,  1.00s/it]
+168.1
 (no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/diff_mpc_4.py
   0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
   gym.logger.warn("Casting input x to numpy array.")
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:02<00:00,  4.24it/s]
-39.5
-(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/se 
-sedd_70_noise/ seed_70/       
-(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/sedd_70_noise/mpc4/model_state_e_0.pt 
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:11<00:00,  1.20s/it]
+198.6
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/mpc70/model_state_e_0.pt 
 tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
         [ 0.0000,  0.0000, -0.1135,  0.0000],
         [ 0.0000,  0.0000,  0.0000,  1.0000],
@@ -29,9 +118,49 @@ tensor([8.4607e-01, 8.2509e-03, 1.1643e+01], dtype=torch.float64,
        requires_grad=True)
   0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
   gym.logger.warn("Casting input x to numpy array.")
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:10<00:00,  1.10s/it]
-mean reward:181.6
-(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/sedd_70_noise/sysid2/model_state_e_0.pt 
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:11<00:00,  1.19s/it]
+mean reward:193.9
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/mpc98/model_state_e_0.pt 
+tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
+        [ 0.0000,  0.0000, -3.0232,  0.0000],
+        [ 0.0000,  0.0000,  0.0000,  1.0000],
+        [ 0.0000,  0.0000, 16.3747,  0.0000]], requires_grad=True) tensor([[ 0.0000],
+        [ 1.4404],
+        [ 0.0000],
+        [-2.4007]], requires_grad=True)
+(array([[ 0.  ,  1.  ,  0.  ,  0.  ],
+       [ 0.  ,  0.  , -0.98,  0.  ],
+       [ 0.  ,  0.  ,  0.  ,  1.  ],
+       [ 0.  ,  0.  , 21.56,  0.  ]]), array([[ 0.],
+       [ 1.],
+       [ 0.],
+       [-2.]]))
+tensor([0.6942, 0.3086, 6.8016], dtype=torch.float64, requires_grad=True)
+  0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
+  gym.logger.warn("Casting input x to numpy array.")
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:09<00:00,  1.05it/s]
+mean reward:164.1
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/mpc127/model_state_e_0.pt 
+tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
+        [ 0.0000,  0.0000, -4.6510,  0.0000],
+        [ 0.0000,  0.0000,  0.0000,  1.0000],
+        [ 0.0000,  0.0000, 16.2193,  0.0000]], requires_grad=True) tensor([[ 0.0000],
+        [ 1.5132],
+        [ 0.0000],
+        [-2.5219]], requires_grad=True)
+(array([[ 0.  ,  1.  ,  0.  ,  0.  ],
+       [ 0.  ,  0.  , -0.98,  0.  ],
+       [ 0.  ,  0.  ,  0.  ,  1.  ],
+       [ 0.  ,  0.  , 21.56,  0.  ]]), array([[ 0.],
+       [ 1.],
+       [ 0.],
+       [-2.]]))
+tensor([0.6609, 0.6050, 5.0805], dtype=torch.float64, requires_grad=True)
+  0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
+  gym.logger.warn("Casting input x to numpy array.")
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:09<00:00,  1.06it/s]
+mean reward:161.9
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/sysid70/model_state_e_0.pt 
 tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
         [ 0.0000,  0.0000, -0.3702,  0.0000],
         [ 0.0000,  0.0000,  0.0000,  1.0000],
@@ -49,16 +178,16 @@ tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
 tensor([ 4.3634,  0.1366, 11.8263], dtype=torch.float64, requires_grad=True)
   0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
   gym.logger.warn("Casting input x to numpy array.")
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:02<00:00,  4.02it/s]
-mean reward:45.8
-(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/seed_70/mpc4/model_state_e_0.pt 
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:02<00:00,  4.44it/s]
+mean reward:40.2
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/sysid98/model_state_e_0.pt 
 tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
-        [ 0.0000,  0.0000, -9.0367,  0.0000],
+        [ 0.0000,  0.0000, -0.1989,  0.0000],
         [ 0.0000,  0.0000,  0.0000,  1.0000],
-        [ 0.0000,  0.0000, 48.7705,  0.0000]], requires_grad=True) tensor([[ 0.0000],
-        [ 0.3628],
+        [ 0.0000,  0.0000, 11.3181,  0.0000]], requires_grad=True) tensor([[ 0.0000],
+        [ 0.2620],
         [ 0.0000],
-        [-0.6046]], requires_grad=True)
+        [-0.4366]], requires_grad=True)
 (array([[ 0.  ,  1.  ,  0.  ,  0.  ],
        [ 0.  ,  0.  , -0.98,  0.  ],
        [ 0.  ,  0.  ,  0.  ,  1.  ],
@@ -66,19 +195,19 @@ tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
        [ 1.],
        [ 0.],
        [-2.]]))
-tensor([ 2.7566,  1.2316, 20.2256], dtype=torch.float64, requires_grad=True)
+tensor([3.8171, 0.1152, 6.5920], dtype=torch.float64, requires_grad=True)
   0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
   gym.logger.warn("Casting input x to numpy array.")
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:12<00:00,  1.28s/it]
-mean reward:200.0
-(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/seed_70/sysid/model_state_e_0.pt 
-tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
-        [ 0.0000,  0.0000, -3.0676,  0.0000],
-        [ 0.0000,  0.0000,  0.0000,  1.0000],
-        [ 0.0000,  0.0000, 38.2595,  0.0000]], requires_grad=True) tensor([[ 0.0000],
-        [ 0.1712],
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:02<00:00,  4.13it/s]
+mean reward:46.2
+(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ /home/pillar/miniconda3/envs/no_mpc/bin/python /home/pillar/Academics/diff_cvx_opt_experiments/src/test_diff_mpc.py --model_path ./src/data/sysid127/model_state_e_0.pt 
+tensor([[0.0000, 1.0000, 0.0000, 0.0000],
+        [0.0000, 0.0000, 0.0086, 0.0000],
+        [0.0000, 0.0000, 0.0000, 1.0000],
+        [0.0000, 0.0000, 7.3782, 0.0000]], requires_grad=True) tensor([[ 0.0000],
+        [ 0.3134],
         [ 0.0000],
-        [-0.2854]], requires_grad=True)
+        [-0.5223]], requires_grad=True)
 (array([[ 0.  ,  1.  ,  0.  ,  0.  ],
        [ 0.  ,  0.  , -0.98,  0.  ],
        [ 0.  ,  0.  ,  0.  ,  1.  ],
@@ -86,9 +215,8 @@ tensor([[ 0.0000,  1.0000,  0.0000,  0.0000],
        [ 1.],
        [ 0.],
        [-2.]]))
-tensor([ 5.8401,  0.9008, 19.8881], dtype=torch.float64, requires_grad=True)
+tensor([ 3.1910, -0.0062,  4.4355], dtype=torch.float64, requires_grad=True)
   0%|                                                                                                                                                                       | 0/10 [00:00<?, ?it/s]/home/pillar/miniconda3/envs/no_mpc/lib/python3.8/site-packages/gymnasium/spaces/box.py:228: UserWarning: WARN: Casting input x to numpy array.
   gym.logger.warn("Casting input x to numpy array.")
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:02<00:00,  4.27it/s]
-mean reward:40.4
-(no_mpc) pillar@pillar-ROG-Strix-G513QR-G513QR:~/Academics/diff_cvx_opt_experiments$ 
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:02<00:00,  4.50it/s]
+mean reward:43.0
