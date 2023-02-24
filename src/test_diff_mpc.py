@@ -1,8 +1,8 @@
 import argparse
 import random
-from imitation_learning import get_model_matrix
+from mpc import get_model_matrix
 import gymnasium
-from diff_mpc import build_mpc_control_policy
+from train_diff_mpc import build_mpc_control_policy
 import tqdm
 from continuous_cartpole_env import CartPoleEnv
 import gymnasium as gym
@@ -11,6 +11,8 @@ import torch
 import numpy as np
 
 def test_solution(model_path,seed):
+
+    #env setup
     random.seed(seed)
     env = CartPoleEnv()
     env = gym.wrappers.TimeLimit(env, max_episode_steps=200)
@@ -20,8 +22,10 @@ def test_solution(model_path,seed):
 
     policy = build_mpc_control_policy(nx, nu, T, env.tau)
     
+    #Load model state
     model_state = torch.load(model_path)
     
+    #Unpack model state
     try:
         A = model_state['A'][-1,:,:]
         B = model_state['B'][-1,:,:]
@@ -38,6 +42,8 @@ def test_solution(model_path,seed):
     print(model_state['env_params'])
 
     episode_rewards = []
+
+    #test loop
     for i in tqdm.tqdm(range(10)):
         episode_reward = 0
         state, _ = env.reset()
@@ -46,7 +52,6 @@ def test_solution(model_path,seed):
         while not (terminated or truncated):
             u = policy(torch.tensor(state),Q,R,A,B)[0][0][0]
             u = torch.clip(u, -1.0, 1.0).detach()
-            #x = x0 + env.tau * torch.bmm(A, x0.unsqueeze(2)).squeeze(2) + torch.bmm(B, u.unsqueeze(1)).squeeze(2)
             state, reward, terminated, truncated, _ = env.step([u])
             episode_reward += reward
             # env.render()
